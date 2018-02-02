@@ -1,15 +1,13 @@
-import { UpdateShippingAddressEventParam } from './cart/events/update-shipping-address/param/update-shipping-address-event-param';
-import { UpdateShippingAddressEvent } from './cart/events/update-shipping-address/event/update-shipping-address-event';
+import { UpdateShippingAddressEventParam, UpdateShippingAddressEvent } from './cart/events/update-shipping-address/update-shipping-address-event';
+import { CartEventInitializer } from './cart/events/cart-event-initializer';
 import { Cart } from './cart/model/cart.model';
 import { CartEventProcessor } from './cart/events/cart-event-processor';
 import { getPlural } from "task-app-pkg/dist";
 import { createStore, applyMiddleware } from 'redux'
 import { CartEvent } from './cart/events/cart-event';
 import { composeWithDevTools, devToolsEnhancer } from 'redux-devtools-extension';
+// https://github.com/zalmoxisus/redux-devtools-extension
 
-
-
-let window: any;
 
 export class Main {
 
@@ -18,7 +16,8 @@ export class Main {
 
         this.attachEvents();
 
-        const eventProcessor = new CartEventProcessor();
+        const eventInitializer = new CartEventInitializer();
+        const eventProcessor = new CartEventProcessor(eventInitializer);
 
         this.store = createStore<Cart>((state, action) => {
             return eventProcessor.reduce(<Cart>state, <CartEvent<any>>action);
