@@ -1,0 +1,40 @@
+{
+  "name": "task-app-consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start",
+    "dev": "webpack-dev-server --inline --hot",
+    "build": "webpack -p"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cristianmercado19/task-app-consumer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cristianmercado19/task-app-consumer/issues"
+  },
+  "homepage": "https://github.com/cristianmercado19/task-app-consumer#readme",
+  "devDependencies": {
+    "@types/jasmine": "^2.8.5",
+    "jasmine-core": "^2.9.1",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.1",
+    "karma-webpack": "^2.0.9",
+    "task-app-pkg": "^1.0.0",
+    "ts-loader": "^3.3.1",
+    "typescript": "^2.6.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "dependencies": {
+    "@types/node": "^9.3.0",
+    "redux": "^3.7.2",
+    "task-app-pkg": "^1.0.0"
+  }
+}
