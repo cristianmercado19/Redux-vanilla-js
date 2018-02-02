@@ -3,10 +3,13 @@ import { UpdateShippingAddressEvent } from './cart/events/update-shipping-addres
 import { Cart } from './cart/model/cart.model';
 import { CartEventProcessor } from './cart/events/cart-event-processor';
 import { getPlural } from "task-app-pkg/dist";
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import { CartEvent } from './cart/events/cart-event';
+import { composeWithDevTools, devToolsEnhancer } from 'redux-devtools-extension';
 
 
+
+let window: any;
 
 export class Main {
 
@@ -19,7 +22,7 @@ export class Main {
 
         this.store = createStore<Cart>((state, action) => {
             return eventProcessor.reduce(<Cart>state, <CartEvent<any>>action);
-        });
+        }, devToolsEnhancer({}));
 
         this.store.subscribe(() => this.render());
     }
@@ -27,7 +30,7 @@ export class Main {
     private render() {
         const div = this.getContentDiv();
 
-        if(div){
+        if (div) {
             div.innerHTML = JSON.stringify(this.store.getState());
         }
     }
@@ -35,7 +38,7 @@ export class Main {
     private attachEvents() {
 
         this.onClickInAR();
-        this.onClickInIe();        
+        this.onClickInIe();
     }
 
     private onClickInIe() {
@@ -58,7 +61,7 @@ export class Main {
         param.newAddress.line1 = 'Urquiza';
         param.newAddress.line2 = 'BsAs';
         const event = new UpdateShippingAddressEvent(param);
-        
+
         this.store.dispatch(event.convertToAction());
     }
 
@@ -69,7 +72,7 @@ export class Main {
         param.newAddress.line1 = 'Apt 64 Camden Lock';
         param.newAddress.line2 = 'DUBLIN';
         const event = new UpdateShippingAddressEvent(param);
-        
+
         this.store.dispatch(event.convertToAction());
     }
     private getUpdateShippingAddressButtonAr() {
