@@ -4,10 +4,13 @@ import { Cart } from './cart/model/cart.model';
 import { CartEventProcessor } from './cart/events/cart-event-processor';
 import { getPlural } from "task-app-pkg/dist";
 import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk';
 import { CartEvent } from './cart/events/cart-event';
 import { composeWithDevTools, devToolsEnhancer } from 'redux-devtools-extension';
+import { compose } from 'redux';
 // https://github.com/zalmoxisus/redux-devtools-extension
 
+let window : any;
 
 export class Main {
 
@@ -16,14 +19,23 @@ export class Main {
 
         this.attachEvents();
 
+        this.initializeStore();
+
+        this.store.subscribe(() => this.render());
+    }
+
+    private initializeStore() {
+
         const eventInitializer = new CartEventInitializer();
         const eventProcessor = new CartEventProcessor(eventInitializer);
 
-        this.store = createStore<Cart>((state, action) => {
+        const rootReducer = (state: any, action: any) => {
             return eventProcessor.reduce(<Cart>state, <CartEvent<any>>action);
-        }, devToolsEnhancer({}));
+        };
 
-        this.store.subscribe(() => this.render());
+        this.store = createStore<Cart>(rootReducer, composeWithDevTools(
+            applyMiddleware(thunk)
+        ));
     }
 
     private render() {
