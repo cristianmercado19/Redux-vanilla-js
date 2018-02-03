@@ -22,7 +22,7 @@ export class UpdateShippingAddressEventHandler
     implements CartEventHandler<UpdateShippingAddressEventParam> {
     handle(currentState: Cart, payload: UpdateShippingAddressEventParam): Cart {
 
-       var newCart = new Cart();
+       var newCart = Object.assign({}, currentState);
        newCart.shippingAddress = new Address();
        newCart.shippingAddress.line1 = payload.newAddress.line1;
        newCart.shippingAddress.line2 = payload.newAddress.line2;

@@ -1,7 +1,6 @@
 import { CartEventHandler } from './cart-event-handler';
 import { AnyAction } from 'redux';
 export abstract class CartEvent<TPayload> implements AnyAction {
-    [extraProps: string]: any;
     type: any;
 
     param: TPayload;

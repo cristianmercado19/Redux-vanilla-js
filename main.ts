@@ -8,20 +8,34 @@ import thunk from 'redux-thunk';
 import { CartEvent } from './cart/events/cart-event';
 import { composeWithDevTools, devToolsEnhancer } from 'redux-devtools-extension';
 import { compose } from 'redux';
+import { Reducer } from 'redux';
+import { UpdateOrderItemsEventParam, UpdateOrderItemsEvent } from './cart/events/request-order-items/request-order-items-event';
+import { Store } from 'redux';
+import { CartService } from './cart/service/cart-service';
+import { CartApi } from './cart/api/cart-api';
 // https://github.com/zalmoxisus/redux-devtools-extension
 
 let window : any;
 
 export class Main {
 
-    private store: any;
+    private store: Store<Cart>;
+    private cartService: CartService;
+
+    constructor() {
+        this.attachEvents();
+        this.initializeStore();
+        this.initializeCartService();
+        this.store.subscribe(() => this.render());        
+    }
     run() {
 
-        this.attachEvents();
+    }
 
-        this.initializeStore();
+    private initializeCartService(){
+        const api = new CartApi();
 
-        this.store.subscribe(() => this.render());
+        this.cartService = new CartService(api, this.store);
     }
 
     private initializeStore() {
@@ -29,8 +43,8 @@ export class Main {
         const eventInitializer = new CartEventInitializer();
         const eventProcessor = new CartEventProcessor(eventInitializer);
 
-        const rootReducer = (state: any, action: any) => {
-            return eventProcessor.reduce(<Cart>state, <CartEvent<any>>action);
+        const rootReducer = (state: Cart, action: any) => {
+            return eventProcessor.reduce(state, <CartEvent<any>>action);
         };
 
         this.store = createStore<Cart>(rootReducer, composeWithDevTools(
@@ -50,8 +64,16 @@ export class Main {
 
         this.onClickInAR();
         this.onClickInIe();
+        this.onClickInGetItems();
     }
 
+
+    private onClickInGetItems() {
+        const button = this.getGetItemsButton();
+        if (button) {
+            button.addEventListener('click', () => this.getItems());
+        }
+    }
     private onClickInIe() {
         const button = this.getUpdateShippingAddressButtonIe();
         if (button) {
@@ -63,6 +85,10 @@ export class Main {
         if (button) {
             button.addEventListener('click', () => this.updateAr());
         }
+    }
+
+    private getItems() {
+        this.cartService.requestOrderItems();
     }
 
     private updateAr() {
@@ -96,6 +122,10 @@ export class Main {
 
     private getContentDiv() {
         return document.getElementById('content');
+    }
+
+    private getGetItemsButton() {
+        return document.getElementById('getItems');
     }
 }
 
