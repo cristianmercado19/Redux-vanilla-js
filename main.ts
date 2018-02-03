@@ -55,7 +55,7 @@ export class Main {
         const div = this.getContentDiv();
 
         if (div) {
-            div.innerHTML = JSON.stringify(this.store.getState());
+            div.innerText = JSON.stringify(this.store.getState(), null, 2);
         }
     }
 
