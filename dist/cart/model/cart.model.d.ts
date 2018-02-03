@@ -3,4 +3,5 @@ import { OrderItem } from './order-item.model';
 export declare class Cart {
     shippingAddress: Address;
     orderItems: Array<OrderItem>;
+    requestOrderItemActionStatus: string;
 }

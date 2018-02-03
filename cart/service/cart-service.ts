@@ -1,4 +1,3 @@
-import { RequestOrderItemsProgressEvent, UpdateOrderItemsEvent, UpdateOrderItemsEventParam, RequestOrderItemsProgressEventParam } from './../events/request-order-items/request-order-items-event';
 import { Cart } from './../model/cart.model';
 import { CartApi } from './../api/cart-api';
 import { Store } from 'redux';
@@ -7,6 +6,8 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/finally';
 import { OrderItem } from '../model/order-item.model';
+import { UpdateOrderItemsActionParam, UpdateOrderItemsAction } from '../actions/update-order-items/update-order-items-action';
+import { RequestOrderItemsProgressAction, RequestOrderItemsProgressActionParam } from '../actions/request-order-items-progress/request-order-items-progress-action';
 
 export class CartService {
 
@@ -18,12 +19,12 @@ export class CartService {
     }
 
     requestOrderItems(){
-        this.dispatchInProgress();
+        this.dispatchRequestProgressAction(true);
 
         this.api.getOrderItems()
         .take(1)
         .finally(() => {
-            this.dispatchCompleted();
+            this.dispatchRequestProgressAction(false);
         })
         .subscribe(
             (orderItems) => {
@@ -41,25 +42,18 @@ export class CartService {
     }
 
     private dispatchUpdateItems(orderItems: Array<OrderItem>){
-        const param = new UpdateOrderItemsEventParam();
+        const param = new UpdateOrderItemsActionParam();
         param.orderItems = orderItems;
 
-        const eventInProgress = new UpdateOrderItemsEvent(param);
+        const action = new UpdateOrderItemsAction(param);
 
-        this.store.dispatch(eventInProgress.convertToAction());
+        this.store.dispatch(action.convertToAction());
     }
 
-    private dispatchInProgress() {
-        const param = new RequestOrderItemsProgressEventParam(true);
-        const eventInProgress = new RequestOrderItemsProgressEvent(param);
+    private dispatchRequestProgressAction(isInProgress: boolean) {
+        const param = new RequestOrderItemsProgressActionParam(isInProgress);
+        const action = new RequestOrderItemsProgressAction(param);
 
-        this.store.dispatch(eventInProgress.convertToAction());
-    }
-
-    private dispatchCompleted() {
-        const param = new RequestOrderItemsProgressEventParam(false);
-        const eventInProgress = new RequestOrderItemsProgressEvent(param);
-
-        this.store.dispatch(eventInProgress.convertToAction());
+        this.store.dispatch(action.convertToAction());
     }
 }
