@@ -1,7 +1,7 @@
-import { Main } from "./main";
+import { CartView } from "./cart/view/cart.view";
+
 
 /**
  * INIT
  */
-const main = new Main();
-main.run();
+const cart = new CartView();

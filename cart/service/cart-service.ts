@@ -1,3 +1,4 @@
+import { RequestOrderItemsProgressObserver } from './request-order-items-progress-observer';
 import { Cart } from './../model/cart.model';
 import { CartApi } from './../api/cart-api';
 import { Store } from 'redux';
@@ -18,20 +19,21 @@ export class CartService {
 
     }
 
-    requestOrderItems(){
-        this.dispatchRequestProgressAction(true);
+    requestOrderItems(progressObserver: RequestOrderItemsProgressObserver){
+        
+        progressObserver.onStart();
 
         this.api.getOrderItems()
         .take(1)
         .finally(() => {
-            this.dispatchRequestProgressAction(false);
+            progressObserver.onComplete();
         })
         .subscribe(
             (orderItems) => {
-                this.dispatchUpdateItems(orderItems)
+                progressObserver.onSuccess(orderItems);
             },
             (error) => {
-                this.dispatchOnError();
+                progressObserver.onfailure();
             }
         );
 
@@ -41,19 +43,7 @@ export class CartService {
 
     }
 
-    private dispatchUpdateItems(orderItems: Array<OrderItem>){
-        const param = new UpdateOrderItemsActionParam();
-        param.orderItems = orderItems;
 
-        const action = new UpdateOrderItemsAction(param);
 
-        this.store.dispatch(action.convertToAction());
-    }
 
-    private dispatchRequestProgressAction(isInProgress: boolean) {
-        const param = new RequestOrderItemsProgressActionParam(isInProgress);
-        const action = new RequestOrderItemsProgressAction(param);
-
-        this.store.dispatch(action.convertToAction());
-    }
 }

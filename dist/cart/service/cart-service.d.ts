@@ -1,3 +1,4 @@
+import { RequestOrderItemsProgressObserver } from './request-order-items-progress-observer';
 import { Cart } from './../model/cart.model';
 import { CartApi } from './../api/cart-api';
 import { Store } from 'redux';
@@ -8,8 +9,6 @@ export declare class CartService {
     private api;
     private store;
     constructor(api: CartApi, store: Store<Cart>);
-    requestOrderItems(): void;
+    requestOrderItems(progressObserver: RequestOrderItemsProgressObserver): void;
     private dispatchOnError();
-    private dispatchUpdateItems(orderItems);
-    private dispatchRequestProgressAction(isInProgress);
 }
